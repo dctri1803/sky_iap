@@ -106,35 +106,52 @@
 
             function displayItems(items) {
                 itemsContainer.innerHTML = '';
+                const itemsByCatalogue = {};
+
                 items.forEach((item, index) => {
-                    const container = document.createElement('div');
-                    container.className = 'col-md-4 checkbox-item-container';
-
-                    const img = document.createElement('img');
-                    img.src = item.image;
-                    img.alt = `Image ${index + 1}`;
-
-                    const label = document.createElement('label');
-                    const checkbox = document.createElement('input');
-                    checkbox.type = 'checkbox';
-                    checkbox.value = item.name;
-                    checkbox.dataset.catalogue = item.catalogue;
-                    checkbox.id = `item${index + 1}`;
-                    checkbox.className = 'checkbox-item';
-
-                    if (selectedItems[item.name]) {
-                        checkbox.checked = true;
+                    if (!itemsByCatalogue[item.catalogue]) {
+                        itemsByCatalogue[item.catalogue] = [];
                     }
+                    itemsByCatalogue[item.catalogue].push(item);
+                });
 
-                    const nameText = document.createTextNode(` ${item.name}`);
+                const sortedCatalogues = Object.keys(itemsByCatalogue).sort();
 
-                    label.appendChild(checkbox);
-                    label.appendChild(nameText);
+                sortedCatalogues.forEach(catalogue => {
+                    const catalogueHeading = document.createElement('h4');
+                    catalogueHeading.textContent = catalogue;
+                    itemsContainer.appendChild(catalogueHeading);
 
-                    container.appendChild(img);
-                    container.appendChild(label);
+                    itemsByCatalogue[catalogue].forEach((item, index) => {
+                        const container = document.createElement('div');
+                        container.className = 'col-md-4 checkbox-item-container';
 
-                    itemsContainer.appendChild(container);
+                        const img = document.createElement('img');
+                        img.src = item.image;
+                        img.alt = `Image ${index + 1}`;
+
+                        const label = document.createElement('label');
+                        const checkbox = document.createElement('input');
+                        checkbox.type = 'checkbox';
+                        checkbox.value = item.name;
+                        checkbox.dataset.catalogue = item.catalogue;
+                        checkbox.id = `item${index + 1}`;
+                        checkbox.className = 'checkbox-item';
+
+                        if (selectedItems[item.name]) {
+                            checkbox.checked = true;
+                        }
+
+                        const nameText = document.createTextNode(` ${item.name}`);
+
+                        label.appendChild(checkbox);
+                        label.appendChild(nameText);
+
+                        container.appendChild(img);
+                        container.appendChild(label);
+
+                        itemsContainer.appendChild(container);
+                    });
                 });
 
                 const checkboxes = document.querySelectorAll('.checkbox-item');
